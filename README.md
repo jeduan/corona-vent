@@ -24,4 +24,6 @@ vent:off('event', onEvent)
 
 vent:allOff('event')
 
+vent:allEventNames()
+
 ```
