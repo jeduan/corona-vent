@@ -1,8 +1,12 @@
 local vent = {}
+local log = require 'vendor.log.log'
 
 local listeners = {}
 
 function vent:on(event, listener)
+	assert(type(self) == 'table', 'Method was called as .on instead of :on')
+	assert(type(event) == 'string', 'Expected event to be a string')
+
 	if listener then
 		listeners[event] = listeners[event] or {}
 		table.insert(listeners[event], listener)
@@ -10,12 +14,17 @@ function vent:on(event, listener)
 end
 
 function vent:off(event, listener)
+	assert(type(self) == 'table', 'Method was called as .off instead of :off')
+	assert(type(event) == 'string', 'Expected event to be a string')
+
 	if listener then
 		for i, currentListener in ipairs(listeners[event] or {}) do
 			if currentListener == listener then
 				table.remove(listeners[event], i)
 			end
 		end
+	else
+		self:allOff(event)
 	end
 end
 
@@ -25,13 +34,13 @@ function vent:allOff(event)
 	end
 end
 
-function vent:trigger( eventName, data )
-	assert(eventName, 'The event needs a name to trigger')
+function vent:trigger(event, data)
+	assert(event, 'The event needs a name to trigger')
 	data = data or {}
 	if type(data) ~= 'table' then
 		data = {value = data}
 	end
-	data.name = eventName
+	data.name = event
 
 	local removals = {}
 

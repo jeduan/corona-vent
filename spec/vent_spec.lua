@@ -1,6 +1,6 @@
 local ev = require 'ev'
 local vent = require 'vent'
-timer = require 'mockTimer'
+timer = require 'mocks.timer'
 setloop('ev')
 
 local function eventually(onTimeout)

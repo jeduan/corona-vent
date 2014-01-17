@@ -2,5 +2,14 @@
   "name": "vent",
   "version": "0.3.0",
   "main": "vent.lua",
-  "ignore": ["test.lua", "mockTimer.lua"]
+  "ignore": [
+    "spec",
+    "mocks",
+    "config.lua",
+    "build.settings",
+    "main.lua"
+  ],
+  "dependencies": {
+    "log": "0.x"
+  }
 }
