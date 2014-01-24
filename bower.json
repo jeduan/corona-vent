@@ -11,5 +11,8 @@
   ],
   "dependencies": {
     "log": "0.x"
+  },
+  "devDependencies": {
+    "middleclass": "~3.0.1"
   }
 }

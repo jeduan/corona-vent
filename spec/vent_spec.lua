@@ -78,3 +78,69 @@ describe("Testing vent", function()
 	end)
 
 end)
+
+local class = require 'vendor.middleclass.middleclass'
+describe('Works as a mixin', function()
+	setup(function()
+		MyObject = class'MyObject'
+		MyObject:include(vent)
+	end)
+	teardown(function()
+		MyObject = nil
+	end)
+
+	it('is a class', function()
+		assert.True(MyObject:isSubclassOf(class.Object))
+	end)
+
+	it('has methods', function()
+		local inst = MyObject:new()
+		assert.truthy(inst.on)
+		assert.truthy(inst.off)
+		assert.truthy(inst.once)
+		assert.truthy(inst.trigger)
+		inst = nil
+	end)
+
+	it('calls a listener with data', function(done)
+		eventually(async(function()
+			local inst = MyObject:new()
+			inst:on('test6', function(self, data)
+				assert.True(data.ok)
+				done()
+			end)
+			inst:trigger('test6', {ok = true})
+		end))
+	end)
+
+	it('has access to self properties', function(done)
+		eventually(async(function()
+			local inst = MyObject:new()
+			inst.hello = 'world'
+			inst:on('test7', function(self)
+				assert.equals(self.hello, 'world')
+				done()
+			end)
+			inst:trigger('test7')
+		end))
+	end)
+
+	it('is different to vent', function(done)
+		eventually(async(function()
+			local inst = MyObject:new()
+			local timescalled = 0
+			local function listener()
+				timescalled = timescalled + 1
+				assert.equals(1, timescalled)
+			end
+
+			vent:on('test8', listener)
+			inst:trigger('test8', nil, true)
+			vent:trigger('test8', nil, true)
+			timer.performWithDelay(0.2, function()
+				done()
+			end)
+		end))
+	end)
+
+end)
