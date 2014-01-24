@@ -50,10 +50,6 @@ function vent:trigger(event, data)
 	assert(event, 'The event needs a name to trigger')
 	data = data or {}
 
-	if self.class then
-		event = self.class.name .. '.' .. event
-	end
-
 	if type(data) ~= 'table' then
 		data = {value = data}
 	end
@@ -61,7 +57,7 @@ function vent:trigger(event, data)
 
 	local removals = {}
 
-	for i, eventTable in ipairs(self._events[event] or {}) do
+	for i, eventTable in ipairs(self:getListeners(event)) do
 		if eventTable.once then
 			removals[#removals + 1] = i
 		end
@@ -76,6 +72,10 @@ function vent:trigger(event, data)
 				eventTable.callback(self, data)
 			end
 		end)
+	end
+
+	if self.class then
+		event = self.class.name .. '.' .. event
 	end
 
 	for i = 1, #removals do
@@ -96,6 +96,13 @@ function vent:once(name, listener)
 		callback = listener,
 		once = true
 	})
+end
+
+function vent:getListeners(event)
+	if self.class then
+		event = self.class.name .. '.' .. event
+	end
+	return self._events[event] or {}
 end
 
 return vent
