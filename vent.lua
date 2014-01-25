@@ -102,7 +102,7 @@ function vent:getListeners(event)
 	if self.class then
 		event = self.class.name .. '.' .. event
 	end
-	return self._events[event] or {}
+	return (self._events and self._events[event]) or {}
 end
 
 return vent
