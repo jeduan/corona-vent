@@ -17,7 +17,10 @@ function vent:on(event, listener)
 
 	if self.class then
 		event = self.class.name .. '.' .. event
+	elseif self.super then
+		event = self.name .. '.' .. event
 	end
+
 
 	self._events[event] = self._events[event] or {}
 	table.insert(self._events[event], listener)
@@ -29,6 +32,8 @@ function vent:off(event, listener)
 
 	if self.class then
 		event = self.class.name .. '.' .. event
+	elseif self.super then
+		event = self.name .. '.' .. event
 	end
 
 	if listener then
@@ -66,7 +71,7 @@ function vent:trigger(event, data)
 				log(eventTable)
 			end
 			-- Special casing for when vent is included as mixin
-			if not self.class then
+			if not self.class and not self.super then
 				eventTable.callback(data)
 			else
 				eventTable.callback(self, data)
@@ -76,6 +81,8 @@ function vent:trigger(event, data)
 
 	if self.class then
 		event = self.class.name .. '.' .. event
+	elseif self.super then
+		event = self.name .. '.' .. event
 	end
 
 	for i = 1, #removals do
@@ -101,6 +108,8 @@ end
 function vent:getListeners(event)
 	if self.class then
 		event = self.class.name .. '.' .. event
+	elseif self.super then
+		event = self.name .. '.' .. event
 	end
 	return (self._events and self._events[event]) or {}
 end
